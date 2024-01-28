@@ -1,6 +1,7 @@
 //import logo from "./logo.svg";
 import "./style.css";
 import "./App.css";
+import { initializeApp } from "firebase/app";
 import { useEffect, useState } from "react";
 import * as React from "react";
 import "./index.css";
@@ -20,42 +21,33 @@ import { auth } from "./firebase";
 import { GoogleAuthProvider } from "firebase/auth";
 import { signInWithRedirect } from "firebase/auth";
 
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, getFirestore } from "firebase/firestore";
 
 // import infoData from './textbook_info.json';
 // import urlsData from './textbook_urls.json';
 
- 
+const firebaseConfig = {
+  apiKey: "AIzaSyCI3tQUmSFRVVtTU7dgrTdWrMqIwkMgpKs",
+  authDomain: "zotnotes-a6fd3.firebaseapp.com",
+  databaseURL: "https://zotnotes-a6fd3-default-rtdb.firebaseio.com",
+  projectId: "zotnotes-a6fd3",
+  storageBucket: "zotnotes-a6fd3.appspot.com",
+  messagingSenderId: "353487217866",
+  appId: "1:353487217866:web:6d2bef91e059ed40714033",
+  measurementId: "G-J1M4FKNK3Q"
+}; 
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-collectionName = "textbookUrls"
+const retrieveCollection = async () => {
+  const q = query(collection(db, "textbookUrls"));
 
-const retrieveCollectionAsJson = async (collectionName) => {
-  try {
-    const querySnapshot = await getDocs(collection(db, collectionName));
-
-    const jsonData = [];
-    querySnapshot.forEach((doc) => {
-      jsonData.push({ id: doc.id, ...doc.data() });
-    });
-
-    return jsonData;
-  } catch (error) {
-    console.error('Error retrieving collection:', error);
-    return null;
-  }
-};
-
-const writeJsonToFile = (jsonData, fileName) => {
-  // Convert the JSON data to a string
-  const jsonString = JSON.stringify(jsonData, null, 2);
-
-  // Save the string to a JSON file
-  const fs = require('fs');
-  fs.writeFileSync(fileName, jsonString);
-
-  console.log(`JSON data written to ${fileName}`);
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data());
+  });
 };
 
 const initializeFirebase = () => {
@@ -131,6 +123,10 @@ function App() {
         setPfp(user.photoURL)
         setId(user.uid)
         console.log("uid", user);
+        Object.keys(bigObject).forEach((key:string)=>{
+          console.log(bigObject[key]);
+          });
+        retrieveCollection()
       } else {
         // User is signed out
         signInWithRedirect(auth, provider);

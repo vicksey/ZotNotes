@@ -21,7 +21,7 @@ async def get_search_results(query: str, COLLECTION_NAME = "IrvineHacks2024"):
     query_embedding = embedding.embed_query(query)
     data = {"sentence": query, "sentence_vector": query_embedding}
 
-    amount = 50
+    amount = 15
     res = client.search(
         collection_name=COLLECTION_NAME,
         data=[data["sentence_vector"]],

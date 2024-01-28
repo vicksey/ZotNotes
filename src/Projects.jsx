@@ -10,14 +10,20 @@ export function Projects(props) {
   async function addClass() {
     console.log('click');
     const { value: formValues } = await Swal.fire({
-      title: "Multiple inputs",
+      title: "Information",
       html: `
-        date
-        <input id="swal-input1" class="swal2-input">
-        course name
-        <input id="swal-input2" class="swal2-input">
-        progress
-        <input id="swal-input3" class="swal2-input">
+      
+      <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px;">
+            <label htmlFor="swal-input1" style={{ width: "100px" }}>Date</label>
+            <input id="swal-input1" className="swal2-input" style={{ flexGrow: 1 }} />
+
+            <label htmlFor="swal-input2" style={{ width: "100px" }}>Course Name</label>
+            <input id="swal-input2" className="swal2-input" style={{ flexGrow: 1 }} />
+
+            <label htmlFor="swal-input3" style={{ width: "100px" }}>Progress</label>
+            <input id="swal-input3" className="swal2-input" style={{ flexGrow: 1 }} />
+    </div>
+      
       `,
       focusConfirm: false,
       preConfirm: () => {
@@ -130,8 +136,22 @@ console.log(props.id, 'SDFSEF')
         {classList.map((item) => (
           <ProjectItem  {...item} />
         ))}
-        <button onClick={addClass}>CLICK ME ADD CLASS</button>
-      </div>
+          <button
+            onClick={addClass}
+            style={{
+              backgroundColor: '#DCC7FF', // Light purple color
+              color: 'white', // Text color
+              padding: '15px 15px', // Padding around the text
+              borderRadius: '15px', // Curved edges
+              border: 'none', // Remove default border
+              boxShadow: '2px 4px 8px rgba(0, 0, 0, 0.2)', // Slight shadow
+              cursor: 'pointer', // Cursor changes to a pointer to indicate it's clickable
+              transition: 'all 0.3s', // Smooth transition for interactions
+            }}
+          >
+            CLICK ME ADD CLASS
+          </button>     
+</div>
     </div>
   );
 }

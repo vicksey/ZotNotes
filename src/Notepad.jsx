@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import SearchBar from './Searchbar';
 
 export function Notepad({setOutputCallback}) {
   const [note, setNote] = useState("");
   const [output, setOutput] = useState("");
+  const [searchResults, setSearchResults] = useState(""); // For displaying search results
   const [questionNumber, setQuestionNumber] = useState(2); // Initialize with default value
 
   const handleChange = (e) => {
@@ -10,7 +12,14 @@ export function Notepad({setOutputCallback}) {
   };
 
   const handleQuestionNumberChange = (e) => {
-    setQuestionNumber(parseInt(e.target.value, 10)); // Parse input as an integer
+    setQuestionNumber(parseInt(e.target.value, 10));
+  };
+
+  const handleSearch = (searchQuery) => {
+    console.log("Searching for:", searchQuery);
+    // Here you'd typically make a request to your backend service
+    // For demonstration, we'll just display the search query
+    setSearchResults(`Results for "${searchQuery}"`);
   };
 
   function sendReq() {
@@ -30,17 +39,40 @@ export function Notepad({setOutputCallback}) {
       redirect: "follow",
     };
 
+    
+
     fetch("/api/generate_quiz", requestOptions)
       .then((response) => response.json())
       .then((result) => {setOutput(result.created_quiz);setOutputCallback(result.created_quiz);})
       .catch((error) => console.log("error", error));
   }
+  function searchText() {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      question_number: questionNumber,
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch("/api/generate_quiz_from_text?question_number="+questionNumber, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {setOutput(result.created_quiz);setOutputCallback(result.created_quiz);})
+      .catch((error) => console.log("error", error));
+  }
+
 
   return (
     <div
       style={{
         display: "flex",
-        flexDirection: "column", // Stacking elements vertically
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "start",
         height: "100vh",
@@ -61,21 +93,16 @@ export function Notepad({setOutputCallback}) {
           resize: "none",
           overflow: "auto",
           backgroundColor: "rgba(0, 0, 0, 0)",
-          color: "black", // Text color
-          // Placeholder styles
-          "::placeholder": {
-            color: "black", // Placeholder text color
-            paddingLeft: "5%", // Slight alignment to the right
-          },
+          color: "black",
         }}
       />
 
       <div
         style={{
           display: "flex",
-          justifyContent: "center", // Centers the buttons horizontally
-          alignItems: "center", // Centers the buttons vertically
-          gap: "20px", // Space between buttons
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "20px",
           marginTop: "20px",
         }}
       >
@@ -106,24 +133,16 @@ export function Notepad({setOutputCallback}) {
           Make Quiz
         </button>
 
-        <button
-          style={{
-            padding: "10px 15px",
-            borderRadius: "15px",
-            backgroundColor: "#4a4ae6",
-            color: "white",
-            cursor: "pointer",
-            border: "none",
-          }}
-        >
-          Upload File
-        </button>
-          
-        <p>{output}</p>
+        <SearchBar onSearch={searchText} />
       </div>
+
+      {/* Displaying search results */}
+      {/* <p>{searchResults}</p>
+      <p>{output}</p> */}
     </div>
   );
 }
+
 
 
 
