@@ -70,7 +70,7 @@ export default function Nav() {
 
           <button className="profile-btn" onClick={() => navigate("/profile")}>
             <img
-              src="https://assets.codepen.io/3306515/IMG_2025.jpg"
+              src=""
               alt="Description"
             />
             <span>Petr</span>

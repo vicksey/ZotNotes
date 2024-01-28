@@ -1,12 +1,19 @@
+import React from 'react';
 import { Notepad } from "./Notepad";
+import { ConsoleBox } from "./Console"; // Adjust the import path as needed
 
 export function Notepage() {
+  const [output, setOutput] = useState(""); // State in the parent component
+  const setOutputCallback = (newOutput) => {
+    setOutput(newOutput);
+  };
+
   return (
     <>
-      <Notepad />
-
-      <div style={{ width: "59.5vw" }}></div>
-      <div style={{ flex: "1 1" }}></div>
+        <Notepad setOutputCallback={setOutputCallback} />
+      <ConsoleBox output={output} />
     </>
   );
 }
+
+

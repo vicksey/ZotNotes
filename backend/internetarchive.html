@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet Archive Data</title>
+</head>
+<body>
+    <div id="archive-info"></div>
+
+    <script>
+        // Function to fetch data from the Internet Archive based on the identifier
+        function fetchArchiveData(identifier) {
+            fetch(`https://archive.org/details/${identifier}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Display the data on the page
+                    document.getElementById('archive-info').innerText = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Call the function with a specific identifier
+        fetchArchiveData('<your-identifier>');
+    </script>
+</body>
+</html>

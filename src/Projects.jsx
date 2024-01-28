@@ -1,33 +1,66 @@
+import { useEffect, useState } from "react";
 import { ProjectItem } from "./ProjectItem";
+import { addDoc, collection, doc, getDocs, onSnapshot, query, setDoc} from "firebase/firestore";
+import { db } from "./firebase";
+import Swal from "sweetalert2";
+ 
 
-export function Projects() {
-  let dbResults = [
-    {
-      date: "February 10, 2024",
-      courseName: "Math 3A",
-      progress: 20,
-    },
-    {
-      date: "February 23, 2024",
-      courseName: "ICS 6B",
-    },
-    {
-      date: "February 10, 2024",
-      courseName: "Math 3A",
-    },
-    {
-      date: "February 10, 2024",
-      courseName: "Math 3A",
-    },
-    {
-      date: "February 10, 2024",
-      courseName: "Math 3A",
-    },
-    {
-      date: "February 10, 2024",
-      courseName: "Math 3A",
-    },
-  ];
+export function Projects(props) {
+
+  async function addClass() {
+    console.log('click');
+    const { value: formValues } = await Swal.fire({
+      title: "Multiple inputs",
+      html: `
+        date
+        <input id="swal-input1" class="swal2-input">
+        course name
+        <input id="swal-input2" class="swal2-input">
+        progress
+        <input id="swal-input3" class="swal2-input">
+      `,
+      focusConfirm: false,
+      preConfirm: () => {
+        return [
+          document.getElementById("swal-input1").value,
+          document.getElementById("swal-input2").value,
+          document.getElementById("swal-input3").value
+
+        ];
+      }
+    });
+    if (formValues) {
+      console.log(formValues)
+      await addDoc(collection(db, "users", props.id, "classes"), {
+        date: formValues[0],
+        courseName: formValues[1],
+        progress: formValues[2]
+      });
+      // Swal.fire(JSON.stringify(formValues));
+    }
+  }
+
+const [classList, setClassList] = useState([]);
+console.log(props.id, 'SDFSEF')
+
+  useEffect(() => {
+    if(!props.id) return;
+    
+    const q = query(collection(db, "users", props.id, "classes"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      let arr = []
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+        arr.push(doc.data())
+      });
+      setClassList(arr)
+    });
+    
+
+    return unsubscribe;
+  }, [props.id]);
+
 
   return (
     <div className="projects-section">
@@ -38,16 +71,16 @@ export function Projects() {
       <div className="projects-section-line">
         <div className="projects-status">
           <div className="item-status">
-            <span className="status-number">Math 2a</span>
-            <span className="status-type">In Progress</span>
+            <span className="status-number">Add </span>
+            <span className="status-type">read</span>
           </div>
           <div className="item-status">
-            <span className="status-number">EECS 12</span>
-            <span className="status-type">Study!</span>
+            <span className="status-number">Classes</span>
+            <span className="status-type">study</span>
           </div>
           <div className="item-status">
-            <span className="status-number">Writing 50</span>
-            <span className="status-type">Do reading!</span>
+            <span className="status-number">Below</span>
+            <span className="status-type">test</span>
           </div>
         </div>
         <div className="view-actions">
@@ -94,9 +127,10 @@ export function Projects() {
         </div>
       </div>
       <div className="project-boxes jsGridView">
-        {dbResults.map((item) => (
-          <ProjectItem {...item} />
+        {classList.map((item) => (
+          <ProjectItem  {...item} />
         ))}
+        <button onClick={addClass}>CLICK ME ADD CLASS</button>
       </div>
     </div>
   );
